@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, flash, url_for
 from shop import app, db, bcrypt
 from werkzeug.utils import redirect
 
-from .forms import RegistrationForm
+from .forms import RegistrationForm, LoginForm
 from .models import User
 
 
@@ -24,3 +24,9 @@ def register():
         flash(f'Welcome {form.name.data}Thank you for registering', 'success')
         return redirect(url_for('index'))
     return render_template('admin/register.html', form=form)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm(request.form)
+    return render_template('admin/login.html', form=form)
