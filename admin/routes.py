@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash, url_for
+from flask import Flask, render_template, request, flash, url_for, session
 
 from shop import app, db, bcrypt
 from werkzeug.utils import redirect
@@ -12,6 +12,14 @@ def index():
     return render_template('admin/index.html')
 
 
+@app.route('/admin')
+def admin():
+    if 'email' not in session:
+        flash(f'Please login first', 'danger')
+        return redirect(url_for('login'))
+    return render_template('admin/index.html')
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm(request.form)
@@ -21,7 +29,7 @@ def register():
                     password=hash_password)
         db.session.add(user)
         db.session.commit()
-        flash(f'Welcome {form.name.data}Thank you for registering', 'success')
+        flash(f'Welcome {form.name.data} Thank you for registering', 'success')
         return redirect(url_for('index'))
     return render_template('admin/register.html', form=form)
 
@@ -29,4 +37,12 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm(request.form)
+    if request.method == 'POST' and form.validate():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            session['email'] = form.email.data
+            flash(f'Welcome {form.email.data} You are logged in now', 'success')
+            return redirect(request.args.get('next') or url_for('admin'))
+        else:
+            flash('Wrong Password please try again', 'danger')
     return render_template('admin/login.html', form=form)

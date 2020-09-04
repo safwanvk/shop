@@ -3,6 +3,7 @@
 {% block content %}
 <div class="text-center h1 text-primary">Register</div>
 <div class="container">
+    {% include 'admin/_messages.html' %}
     {% from "admin/_formhelpers.html" import render_field %}
     <form method="post" enctype="multipart/form-data">
         <dl>
