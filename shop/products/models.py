@@ -1,4 +1,4 @@
-from .shop import db
+from shop import db
 
 
 class Brand(db.Model):

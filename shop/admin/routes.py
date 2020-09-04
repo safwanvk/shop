@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request, flash, url_for, session
 
-from shop import app, db, bcrypt
+
 from werkzeug.utils import redirect
 
 from .forms import RegistrationForm, LoginForm
 from .models import User
+from .. import app, db, bcrypt
 
 
 @app.route('/')
