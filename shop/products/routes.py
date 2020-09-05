@@ -3,6 +3,7 @@ from flask import render_template, request, flash, url_for
 from shop import app
 from werkzeug.utils import redirect
 
+from .forms import AddProductForm
 from .models import Brand, Category
 from .. import db
 
@@ -26,6 +27,12 @@ def add_category():
         category = Category(name=get_category)
         db.session.add(category)
         db.session.commit()
-        flash(f'The brand {get_category} was added to your database', 'success')
+        flash(f'The Category {get_category} was added to your database', 'success')
         return redirect(url_for('add_category'))
     return render_template('products/add_brand.html')
+
+
+@app.route('/add-product', methods=['GET', 'POST'])
+def add_product():
+    form = AddProductForm(request.form)
+    return render_template('products/add_product.html', form=form)
