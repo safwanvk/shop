@@ -34,5 +34,7 @@ def add_category():
 
 @app.route('/add-product', methods=['GET', 'POST'])
 def add_product():
+    brands = Brand.query.all()
+    categories = Category.query.all()
     form = AddProductForm(request.form)
-    return render_template('products/add_product.html', form=form)
+    return render_template('products/add_product.html', form=form, brands=brands, categories=categories)
