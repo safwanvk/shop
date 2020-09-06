@@ -6,7 +6,7 @@ from shop import app
 from werkzeug.utils import redirect
 
 from .forms import AddProductForm
-from .models import Brand, Category
+from .models import Brand, Category, Product
 from .. import db, photos
 
 
@@ -38,9 +38,22 @@ def add_category():
 def add_product():
     brands = Brand.query.all()
     categories = Category.query.all()
-    if request.method == 'POST':
-        photos.save(request.files.get('image_1'), name=secrets.token_hex(10) + '.')
-        photos.save(request.files.get('image_2'), name=secrets.token_hex(10) + '.')
-        photos.save(request.files.get('image_3'), name=secrets.token_hex(10) + '.')
     form = AddProductForm(request.form)
+    if request.method == 'POST':
+        name = form.name.data
+        price = form.price.data
+        discount = form.discount.data
+        stock = form.stock.data
+        colors = form.colors.data
+        desc = form.discription.data
+        brand = request.form.get('brand')
+        category = request.form.get('categories')
+        image_1 = photos.save(request.files.get('image_1'), name=secrets.token_hex(10) + '.')
+        image_2 = photos.save(request.files.get('image_2'), name=secrets.token_hex(10) + '.')
+        image_3 = photos.save(request.files.get('image_3'), name=secrets.token_hex(10) + '.')
+        addpro = Product(name=name, price=price, discount=discount, stock=stock, colors=colors, desc=desc, brand_id=brand, category_id=category, image_1=image_1, image_2=image_2, image_3=image_3)
+        db.session.add(addpro)
+        flash(f'The product {name} has been added to your database', 'success')
+        db.session.commit()
+        return redirect(url_for('admin'))
     return render_template('products/add_product.html', form=form, brands=brands, categories=categories)
