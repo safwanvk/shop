@@ -1,12 +1,11 @@
 from flask import Flask, render_template, request, flash, url_for, session
 
-
 from werkzeug.utils import redirect
 
 from .forms import RegistrationForm, LoginForm
 from .models import User
 from .. import app, db, bcrypt
-from ..products.models import Product
+from ..products.models import Product, Brand
 
 
 @app.route('/')
@@ -21,6 +20,15 @@ def admin():
         return redirect(url_for('login'))
     products = Product.query.all()
     return render_template('admin/index.html', products=products)
+
+
+@app.route('/brands')
+def view_brands():
+    if 'email' not in session:
+        flash(f'Please login first', 'danger')
+        return redirect(url_for('login'))
+    brands = Brand.query.order_by(Brand.id.desc()).all()
+    return render_template('admin/brands.html', brands=brands)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -49,5 +57,3 @@ def login():
         else:
             flash('Wrong Password please try again', 'danger')
     return render_template('admin/login.html', form=form)
-
-
