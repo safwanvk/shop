@@ -25,6 +25,21 @@ def add_brand():
     return render_template('products/add_brand.html', brands='brands')
 
 
+@app.route('/update-brand/<int:id>', methods=['GET', 'POST'])
+def update_brand(id):
+    if 'email' not in session:
+        flash(f'Please login first', 'danger')
+        return redirect(url_for('login'))
+    update_brand = Brand.query.get_or_404(id)
+    brand = request.form.get('brand')
+    if request.method == 'POST':
+        update_brand.name = brand
+        flash(f'Your brand has been updated', 'success')
+        db.session.commit()
+        return redirect(url_for('view_brands'))
+    return render_template('products/update_brand.html', update_brand=update_brand)
+
+
 @app.route('/add-category', methods=['GET', 'POST'])
 def add_category():
     if 'email' not in session:
