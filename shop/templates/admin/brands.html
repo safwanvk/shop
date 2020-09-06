@@ -19,6 +19,15 @@
               <td><a href="" class="btn btn-sm btn-outline-danger">Delete</a></td>
           </tr>
         {% endfor %}
+        {% else %}
+        {% for category in categories %}
+          <tr>
+              <td>{{ loop.index }}</td>
+              <td>{{ category.name }}</td>
+              <td><a href="" class="btn btn-sm btn-outline-info">Edit</a></td>
+              <td><a href="" class="btn btn-sm btn-outline-danger">Delete</a></td>
+          </tr>
+        {% endfor %}
         {% endif %}
         </tbody>
     </table>

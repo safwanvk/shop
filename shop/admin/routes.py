@@ -5,7 +5,7 @@ from werkzeug.utils import redirect
 from .forms import RegistrationForm, LoginForm
 from .models import User
 from .. import app, db, bcrypt
-from ..products.models import Product, Brand
+from ..products.models import Product, Brand, Category
 
 
 @app.route('/')
@@ -29,6 +29,15 @@ def view_brands():
         return redirect(url_for('login'))
     brands = Brand.query.order_by(Brand.id.desc()).all()
     return render_template('admin/brands.html', brands=brands)
+
+
+@app.route('/categories')
+def view_categories():
+    if 'email' not in session:
+        flash(f'Please login first', 'danger')
+        return redirect(url_for('login'))
+    categories = Category.query.order_by(Category.id.desc()).all()
+    return render_template('admin/brands.html', categories=categories)
 
 
 @app.route('/register', methods=['GET', 'POST'])
