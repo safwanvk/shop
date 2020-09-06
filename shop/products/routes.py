@@ -55,6 +55,21 @@ def add_category():
     return render_template('products/add_brand.html')
 
 
+@app.route('/update-category/<int:id>', methods=['GET', 'POST'])
+def update_category(id):
+    if 'email' not in session:
+        flash(f'Please login first', 'danger')
+        return redirect(url_for('login'))
+    update_category = Category.query.get_or_404(id)
+    category = request.form.get('category')
+    if request.method == 'POST':
+        update_category.name = category
+        flash(f'Your category has been updated', 'success')
+        db.session.commit()
+        return redirect(url_for('view_categories'))
+    return render_template('products/update_brand.html', update_category=update_category)
+
+
 @app.route('/add-product', methods=['GET', 'POST'])
 def add_product():
     if 'email' not in session:
@@ -75,7 +90,8 @@ def add_product():
         image_1 = photos.save(request.files.get('image_1'), name=secrets.token_hex(10) + '.')
         image_2 = photos.save(request.files.get('image_2'), name=secrets.token_hex(10) + '.')
         image_3 = photos.save(request.files.get('image_3'), name=secrets.token_hex(10) + '.')
-        addpro = Product(name=name, price=price, discount=discount, stock=stock, colors=colors, desc=desc, brand_id=brand, category_id=category, image_1=image_1, image_2=image_2, image_3=image_3)
+        addpro = Product(name=name, price=price, discount=discount, stock=stock, colors=colors, desc=desc,
+                         brand_id=brand, category_id=category, image_1=image_1, image_2=image_2, image_3=image_3)
         db.session.add(addpro)
         flash(f'The product {name} has been added to your database', 'success')
         db.session.commit()
