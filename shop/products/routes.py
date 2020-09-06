@@ -86,7 +86,7 @@ def add_product():
         colors = form.colors.data
         desc = form.discription.data
         brand = request.form.get('brand')
-        category = request.form.get('categories')
+        category = request.form.get('category')
         image_1 = photos.save(request.files.get('image_1'), name=secrets.token_hex(10) + '.')
         image_2 = photos.save(request.files.get('image_2'), name=secrets.token_hex(10) + '.')
         image_3 = photos.save(request.files.get('image_3'), name=secrets.token_hex(10) + '.')
@@ -97,3 +97,35 @@ def add_product():
         db.session.commit()
         return redirect(url_for('admin'))
     return render_template('products/add_product.html', form=form, brands=brands, categories=categories)
+
+
+@app.route('/update-product/<int:id>', methods=['GET', 'POST'])
+def update_product(id):
+    if 'email' not in session:
+        flash(f'Please login first', 'danger')
+        return redirect(url_for('login'))
+    brands = Brand.query.all()
+    categories = Category.query.all()
+    product = Product.query.get_or_404(id)
+    brand = request.form.get('brand')
+    category = request.form.get('category')
+    form = AddProductForm(request.form)
+    if request.method == 'POST':
+        product.name = form.name.data
+        product.price = form.price.data
+        product.discount = form.discount.data
+        product.stock = form.stock.data
+        product.brand_id = brand
+        product.category_id = category
+        product.colors = form.colors.data
+        product.desc = form.discription.data
+        db.session.commit()
+        flash(f'Your product has been updated', 'success')
+        return redirect(url_for('admin'))
+    form.name.data = product.name
+    form.price.data = product.price
+    form.discount.data = product.discount
+    form.stock.data = product.stock
+    form.colors.data = product.colors
+    form.discription.data = product.desc
+    return render_template('products/update_product.html', form=form, brands=brands, categories=categories, product=product)
