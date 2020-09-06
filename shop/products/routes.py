@@ -1,6 +1,6 @@
 import secrets
 
-from flask import render_template, request, flash, url_for
+from flask import render_template, request, flash, url_for, session
 
 from shop import app
 from werkzeug.utils import redirect
@@ -12,6 +12,9 @@ from .. import db, photos
 
 @app.route('/add-brand', methods=['GET', 'POST'])
 def add_brand():
+    if 'email' not in session:
+        flash(f'Please login first', 'danger')
+        return redirect(url_for('login'))
     if request.method == 'POST':
         get_brand = request.form['brand']
         brand = Brand(name=get_brand)
@@ -24,6 +27,9 @@ def add_brand():
 
 @app.route('/add-category', methods=['GET', 'POST'])
 def add_category():
+    if 'email' not in session:
+        flash(f'Please login first', 'danger')
+        return redirect(url_for('login'))
     if request.method == 'POST':
         get_category = request.form['category']
         category = Category(name=get_category)
@@ -36,6 +42,9 @@ def add_category():
 
 @app.route('/add-product', methods=['GET', 'POST'])
 def add_product():
+    if 'email' not in session:
+        flash(f'Please login first', 'danger')
+        return redirect(url_for('login'))
     brands = Brand.query.all()
     categories = Category.query.all()
     form = AddProductForm(request.form)

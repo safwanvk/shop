@@ -6,6 +6,7 @@ from werkzeug.utils import redirect
 from .forms import RegistrationForm, LoginForm
 from .models import User
 from .. import app, db, bcrypt
+from ..products.models import Product
 
 
 @app.route('/')
@@ -18,7 +19,8 @@ def admin():
     if 'email' not in session:
         flash(f'Please login first', 'danger')
         return redirect(url_for('login'))
-    return render_template('admin/index.html')
+    products = Product.query.all()
+    return render_template('admin/index.html', products=products)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -47,3 +49,5 @@ def login():
         else:
             flash('Wrong Password please try again', 'danger')
     return render_template('admin/login.html', form=form)
+
+
